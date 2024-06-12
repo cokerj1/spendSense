@@ -38,7 +38,7 @@ export const FinancialRecordProvider = ({children}:{children:React.ReactNode}) =
         try {
             if (response.ok) {
                 const newRecord = await response.json();
-                setRecords((prev) => [...prev, newRecord]);
+                setRecords((prev) => [...prev, newRecord]); 
             }
         } catch (error) {
             // Possible error message
