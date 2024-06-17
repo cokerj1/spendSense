@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/getAllByUserID/:userId", async(req: Request,res: Response) => {
     try {
         const userId = req.params.userId;
-        const records = await FinancialRecordModel.find({userId: userId});
+        const records = await FinancialRecordModel.find({ userID: userId });
         if (records.length === 0){
             return res.status(404).send("No records found for the user.");
         }
