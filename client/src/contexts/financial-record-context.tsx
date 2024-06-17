@@ -26,13 +26,20 @@ interface FinancialRecordContextType {
 export const FinancialRecordContext = createContext<FinancialRecordContextType | undefined>(undefined)
 
 // creating a component to be the provider, grabbing children components from whatever has been wrapped inside
-export const FinancialRecordProvider = ({children}:{children:React.ReactNode}) => {
+export const FinancialRecordProvider = ({
+    children
+}:{
+    children:React.ReactNode
+}) => {
     const [records, setRecords] = useState<FinancialRecord[]>([]);
 
     const addRecord = async (record: FinancialRecord) => {
         const response = await fetch("http://localhost:3001/financial-records", {
             method: "POST",
             body: JSON.stringify(record),
+            headers: {
+                "Content-Type": "application/json",
+            }
         });
 
         try {
@@ -42,6 +49,7 @@ export const FinancialRecordProvider = ({children}:{children:React.ReactNode}) =
             }
         } catch (error) {
             // Possible error message
+            throw new Error("Error adding record");
         }
     };
 
@@ -55,7 +63,9 @@ export const FinancialRecordProvider = ({children}:{children:React.ReactNode}) =
 
 
 export const useFinancialRecords = () => {
-    const context = useContext<FinancialRecordContextType | undefined>(FinancialRecordContext);
+    const context = useContext<FinancialRecordContextType | undefined>(
+        FinancialRecordContext
+    );
 
     if(!context){
         throw new Error("useFinancialRecords can't be used outside a FinancialRecordsProvider");

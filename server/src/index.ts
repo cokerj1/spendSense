@@ -1,15 +1,16 @@
-//PW: 5DzAHknXquU0Ljn5y
 import express,{Express} from 'express';
 import mongoose from 'mongoose';
 import financialRecordRouter from "./routes/financial-records";
+import cors from 'cors';
 
 const app: Express = express();
 // Specifying a port, or defaulting to 3001
 const port = process.env.PORT || 3001;
 
 app.use(express.json());
+app.use(cors());
 
-const mongoURI: string = "mongodb+srv://jcoker361:5DzAHknXquU0Ljn5y@ss0.zkcb7j4.mongodb.net/"
+const mongoURI: string = "mongodb+srv://jcoker361:2wHykPnb6dWTzn8M@ss0.zkcb7j4.mongodb.net/"
 
 mongoose
     .connect(mongoURI)

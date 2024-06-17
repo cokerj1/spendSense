@@ -6,7 +6,7 @@ const router = express.Router();
 // setting up endpoints to mongoDB
 
 //Retrieving (GET) records by the user ID
-router.get("/getAllByUserID/:userId",async(req: Request,res: Response) => {
+router.get("/getAllByUserID/:userId", async(req: Request,res: Response) => {
     try {
         const userId = req.params.userId;
         const records = await FinancialRecordModel.find({userId: userId});
