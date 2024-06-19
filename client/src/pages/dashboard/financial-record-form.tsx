@@ -1,3 +1,4 @@
+import './financial-record.css'
 import { useState } from "react"
 import { useUser } from "@clerk/clerk-react";
 import { useFinancialRecords } from "../../contexts/financial-record-context";

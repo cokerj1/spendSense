@@ -1,3 +1,4 @@
+import './financial-record.css';
 import { useMemo, useState } from "react";
 import { FinancialRecord, useFinancialRecords } from "../../contexts/financial-record-context"
 import {useTable,Column,Row,CellProps} from 'react-table';
@@ -24,7 +25,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
   // Determing if the user is editing, if so, render the input
   // if not, display the value if it is a string, otherwise convert to astring before displaying
   return (
-    <div onClick={() => editable && setIsEditing(true)}>
+    <div onClick={() => editable && setIsEditing(true)}
+    style={{cursor:editable ? "pointer" : "default"}}>
       {isEditing ? (
         <input
           value={value}
