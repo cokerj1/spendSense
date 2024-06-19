@@ -7,34 +7,91 @@ interface EditableCellProps extends CellProps<FinancialRecord> {
     editable: boolean;
 }
 
-const EditableCell : React.FC<EditableCellProps> = ({value: initialValue, row, column, updateRecord, editable}) =>{
-    const [isEditing, setIsEditing] = useState(false);
-    const [value, setValue] = useState(initialValue);
-    
-    // Determing if the user is editing, if so, render the input
-    // if not, display the value if it is a string, otherwise convert to astring before displaying
-    return (
-    <div onClick={()=> editable && setIsEditing(true)}>
-        {isEditing? 
-        <input value={value} onChange={(e)=> setValue(e.target.value)} autoFocus style={{width: "100%"}}/>
-        : typeof value === "string" 
-        ? (value) 
-        : (value.toString()) }
+const EditableCell: React.FC<EditableCellProps> = ({
+  value: initialValue,
+  row,
+  column,
+  updateRecord,
+  editable,
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(initialValue);
+  const onBlur = () => {
+    setIsEditing(false);
+    updateRecord(row.index,column.id, value);
+  };
+
+  // Determing if the user is editing, if so, render the input
+  // if not, display the value if it is a string, otherwise convert to astring before displaying
+  return (
+    <div onClick={() => editable && setIsEditing(true)}>
+      {isEditing ? (
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          autoFocus
+          onBlur={onBlur}
+          style={{ width: "100%" }}
+        />
+      ) : typeof value === "string" ? (
+        value
+      ) : (
+        value.toString()
+      )}
     </div>
-    )
-}
+  );
+};
 
 export const FinancialRecordList = () => {
     const {records} = useFinancialRecords();
-    const columns : Array<Column<FinancialRecord>> = useMemo(()=>[
-        {
-            Header: "Description",
-            accessor: "description",
-            cell: (props) => (
-                <EditableCell {...props} updateRecord={()=>null} editable={true}/>
-            )
-        }
-    ])
+    const columns: Array<Column<FinancialRecord>> = useMemo(() => [
+      {
+        Header: "Description",
+        accessor: "description",
+        Cell: (props) => (
+          <EditableCell {...props} updateRecord={() => null} editable={true} />
+        ),
+      },
+      {
+        Header: "Amount",
+        accessor: "amount",
+        Cell: (props) => (
+          <EditableCell {...props} updateRecord={() => null} editable={true} />
+        ),
+      },
+      {
+        Header: "Category",
+        accessor: "category",
+        Cell: (props) => (
+          <EditableCell {...props} updateRecord={() => null} editable={true} />
+        ),
+      },
+      {
+        Header: "Payment Method",
+        accessor: "paymentMethod",
+        Cell: (props) => (
+          <EditableCell {...props} updateRecord={() => null} editable={true} />
+        ),
+      },
+      {
+        Header: "Date",
+        accessor: "date",
+        Cell: (props) => (
+          <EditableCell {...props} updateRecord={() => null} editable={false} />
+        ),
+      },
+      {
+        Header: "Delete",
+        id: "delete",
+        Cell: ({ row }) => (
+          <button onClick={() => null} className="button">
+            Delete
+          </button>
+        ),
+      },
+    ],
+    []
+);
     const {getTableBodyProps,getTableProps,rows,prepareRow,headerGroups} = useTable({
         columns,
         data: records,
