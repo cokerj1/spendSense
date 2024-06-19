@@ -1,92 +1,145 @@
-// Essentially the state manager, where all the record states and functions 
+// Essentially the state manager, where all the record states and functions
 // to affect said states exist
 import { createContext, useContext, useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { json } from "react-router-dom";
 
-export interface FinancialRecord{
-    id?: string;
-    userID:string;
-    date:Date;
-    description:string;
-    amount:number;
-    category:string;
-    paymentMethod:string; 
+export interface FinancialRecord {
+  _id?: string;
+  userId: string;
+  date: Date;
+  description: string;
+  amount: number;
+  category: string;
+  paymentMethod: string;
 }
 
-interface FinancialRecordContextType {
-    records: FinancialRecord[];
-    addRecord: (record: FinancialRecord) => void;
-    // updateRecord: (id: string, newRecord: FinancialRecord) => void;
-    // deleteRecord: (id: string) => void;
-
-
+interface FinancialRecordsContextType {
+  records: FinancialRecord[];
+  addRecord: (record: FinancialRecord) => void;
+  updateRecord: (id: string, newRecord: FinancialRecord) => void;
+  deleteRecord: (id: string) => void;
 }
 
-
-export const FinancialRecordContext = createContext<FinancialRecordContextType | undefined>(undefined)
+export const FinancialRecordsContext = createContext<
+  FinancialRecordsContextType | undefined
+>(undefined);
 
 // creating a component to be the provider, grabbing children components from whatever has been wrapped inside
-export const FinancialRecordProvider = ({
-    children
-}:{
-    children:React.ReactNode
+export const FinancialRecordsProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
 }) => {
-    const [records, setRecords] = useState<FinancialRecord[]>([]);
-    const {user} = useUser();
+  const [records, setRecords] = useState<FinancialRecord[]>([]);
+  const { user } = useUser();
 
-    const fetchRecords = async () => {
-        if (!user) return;
-        const response = await fetch(
-            `http://localhost:3001/financial-records/getAllByUserID/${user.id}`
-        );
-        if(response.ok){
-            const records = await response.json();
-            console.log(records);
-            setRecords(records);
-        }
+  const fetchRecords = async () => {
+    if (!user) return;
+    const response = await fetch(
+      `http://localhost:3001/financial-records/getAllByUserID/${user.id}`
+    );
+    
+    if (response.ok) {
+      const records = await response.json();
+      console.log(records);
+      setRecords(records);
     }
+  };
 
-    useEffect(()=> {
-        fetchRecords();
-    }, [user]);
+  useEffect(() => {
+    fetchRecords();
+  }, [user]);
 
-    const addRecord = async (record: FinancialRecord) => {
-        const response = await fetch("http://localhost:3001/financial-records", {
-            method: "POST",
-            body: JSON.stringify(record),
-            headers: {
-                "Content-Type": "application/json",
-            }
-        });
+  const addRecord = async (record: FinancialRecord) => {
+    const response = await fetch("http://localhost:3001/financial-records", {
+      method: "POST",
+      body: JSON.stringify(record),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-        try {
-            if (response.ok) {
-                const newRecord = await response.json();
-                setRecords((prev) => [...prev, newRecord]); 
-            }
-        } catch (error) {
-            // Possible error message
-            throw new Error("Error adding record");
-        }
-    };
+    try {
+      if (response.ok) {
+        const newRecord = await response.json();
+        setRecords((prev) => [...prev, newRecord]);
+      }
+    } catch (error) {
+      // Possible error message
+      throw new Error("Error adding record");
+    }
+  };
 
-
-
-    return <FinancialRecordContext.Provider value={{records, addRecord}}>
-        {children}
-        </FinancialRecordContext.Provider>
-};
-
-
-export const useFinancialRecords = () => {
-    const context = useContext<FinancialRecordContextType | undefined>(
-        FinancialRecordContext
+  const updateRecord = async (id: string, record: FinancialRecord) => {
+    const response = await fetch(
+      `http://localhost:3001/financial-records/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(record),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
-    if(!context){
-        throw new Error("useFinancialRecords can't be used outside a FinancialRecordsProvider");
+    try {
+      if (response.ok) {
+        // changing the updated record by mapping through: if any element has a record id equal to id
+        // of the updated record, reflect the new record that was changed, else keep the old version of it
+        const newRecord = await response.json();
+        setRecords((prev) =>
+          prev.map((record) => {
+            if (record._id === id) {
+              return newRecord;
+            } else {
+              return record;
+            }
+          })
+        );
+      }
+    } catch (error) {
+      // Possible error message
+      throw new Error("Error updating record");
     }
+  };
 
-    return context; 
+  const deleteRecord = async (id: string) => {
+    const response = await fetch(
+      `http://localhost:3001/financial-records/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    try {
+      if (response.ok) {
+        const deletedRecord = await response.json();
+        setRecords((prev) =>
+          prev.filter((record) => record._id !== deletedRecord._id)
+        );
+      }
+    } catch (err) {}
+  };
+
+  return (
+    <FinancialRecordsContext.Provider
+      value={{ records, addRecord, updateRecord, deleteRecord }}
+    >
+      {children}
+    </FinancialRecordsContext.Provider>
+  );
+};
+
+export const useFinancialRecords = () => {
+  const context = useContext<FinancialRecordsContextType | undefined>(
+    FinancialRecordsContext
+  );
+
+  if (!context) {
+    throw new Error(
+      "useFinancialRecords can't be used outside a FinancialRecordsProvider"
+    );
+  }
+
+  return context;
 };

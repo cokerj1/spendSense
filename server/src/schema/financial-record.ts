@@ -1,7 +1,7 @@
 import mongoose, { model } from "mongoose";
 
 interface FinancialRecord{
-    userID:string;
+    userId:string;
     date:Date;
     description:string;
     amount:number;
@@ -10,7 +10,7 @@ interface FinancialRecord{
 }
 
 const financialRecordSchema = new mongoose.Schema<FinancialRecord>({
-    userID: {type: String, required: true},
+    userId: {type: String, required: true},
     date: {type: Date, required: true},
     description: {type: String, required: true},
     amount: {type: Number, required: true},
