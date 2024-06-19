@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { json } from "react-router-dom";
 
-interface FinancialRecord{
+export interface FinancialRecord{
     id?: string;
     userID:string;
     date:Date;
