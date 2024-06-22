@@ -1,10 +1,10 @@
-import { SignedOut, UserButton, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import { FinancialRecordForm } from "./financial-record-form";
 import { FinancialRecordList } from "./financial-record-list";
 import "./financial-record.css";
 import { useFinancialRecords } from "../../contexts/financial-record-context";
 import { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 export const Dashboard = () => {
   const { user } = useUser();
@@ -19,18 +19,23 @@ export const Dashboard = () => {
   }, [records]);
   return (
     <>
-      <div className="navbar">
-        <Link to={"/"}>DashBoard</Link>
-        <UserButton />
-      </div>
-      <div className="dashboard-container">
-        <h1>Welcome {user?.firstName}! Here is your summary:</h1>
-        <div>
-          <FinancialRecordForm />
-          <div>Monthly Total: £{totalMonthly}</div>
-          <FinancialRecordList />
+      <SignedOut>
+        <Navigate to={"/auth"} />
+      </SignedOut>
+      <SignedIn>
+        <div className="navbar">
+          <Link to={"/"}>DashBoard</Link>
+          <UserButton />
         </div>
-      </div>
+        <div className="dashboard-container">
+          <h1>Welcome {user?.firstName}! Here is your summary:</h1>
+          <div>
+            <FinancialRecordForm />
+            <div>Monthly Total: £{totalMonthly}</div>
+            <FinancialRecordList />
+          </div>
+        </div>
+      </SignedIn>
     </>
   );
 };
