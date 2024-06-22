@@ -31,7 +31,7 @@ export const Dashboard = () => {
           <UserButton />
         </div>
         <div className="dashboard-container">
-          <h1>Welcome {user?.firstName}! Here is your summary:</h1>
+          <h1>Welcome <i>{user?.firstName}</i>! Here is your summary:</h1>
           <div>
             <FinancialRecordForm />
             <div>Monthly Total: £{totalMonthly}</div>
