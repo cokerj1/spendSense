@@ -4,7 +4,8 @@ import { FinancialRecordList } from "./financial-record-list";
 import "./financial-record.css";
 import { useFinancialRecords } from "../../contexts/financial-record-context";
 import { useMemo } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import logo from "./assets/logo-transparent-png.png";
 
 export const Dashboard = () => {
   const { user } = useUser();
@@ -13,7 +14,9 @@ export const Dashboard = () => {
   const totalMonthly = useMemo(() => {
     let totalAmount = 0;
     records.forEach((record) => {
-      totalAmount += record.amount;
+      if (new Date(record.date).getMonth() === new Date().getMonth()) {
+        totalAmount += record.amount;
+      }
     });
     return totalAmount;
   }, [records]);
@@ -24,7 +27,7 @@ export const Dashboard = () => {
       </SignedOut>
       <SignedIn>
         <div className="navbar">
-          <Link to={"/"}>DashBoard</Link>
+          <img src={logo} className="navbar-logo" />
           <UserButton />
         </div>
         <div className="dashboard-container">
