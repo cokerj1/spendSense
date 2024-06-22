@@ -2,6 +2,10 @@
 .dashboard-container {
     width: 80%;
   }
+
+.navbar {
+  width:100vw;
+}
   
   /* General styling for headers within the app */
   h1,

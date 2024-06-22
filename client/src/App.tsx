@@ -9,12 +9,12 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-        <div className="navbar">
+        {/* <div className="navbar">
           <Link to={"/"}>DashBoard</Link>
           <SignedIn>
             <UserButton />
           </SignedIn>
-        </div>
+        </div> */}
         <Routes>
           <Route
             path="/"
