@@ -32,12 +32,15 @@ export const FinancialRecordsProvider = ({
 }) => {
   const [records, setRecords] = useState<FinancialRecord[]>([]);
   const { user } = useUser();
+  
+  const BACKEND_URL:string = import.meta.env.RENDER_BACKEND_URL
 
   const fetchRecords = async () => {
     if (!user) return;
-    const response = await fetch(
-      `http://localhost:3001/financial-records/getAllByUserID/${user.id}`
-    );
+    const response = await fetch( // might need to handle ports as well
+      //`http://localhost:3001/financial-records/getAllByUserID/${user.id}`
+      //`${BACKEND_URL}/financial-records/getAllByUserID/${user.id}`
+    )
     
     if (response.ok) {
       const records = await response.json();
@@ -51,7 +54,7 @@ export const FinancialRecordsProvider = ({
   }, [user]);
 
   const addRecord = async (record: FinancialRecord) => {
-    const response = await fetch("http://localhost:3001/financial-records", {
+    const response = await fetch(`http://localhost:3001/financial-records`, {
       method: "POST",
       body: JSON.stringify(record),
       headers: {
